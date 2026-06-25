@@ -7,10 +7,7 @@ import androidx.compose.runtime.*
 import com.reviewflow.ui.auth.AuthScreen
 import com.reviewflow.ui.onboarding.OnboardingScreen
 import com.reviewflow.ui.dashboard.AnalyticsDashboardScreen
-import com.reviewflow.ui.superadmin.SuperAdminDashboardScreen
-import com.reviewflow.ui.superadmin.PlansPricingScreen
-import com.reviewflow.ui.superadmin.UsersManagementScreen
-import com.reviewflow.ui.superadmin.AuditLogsScreen
+import com.reviewflow.ui.superadmin.SuperAdminShell
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,22 +20,9 @@ class MainActivity : ComponentActivity() {
                     onAuthSuccess = { currentScreen = "onboarding" }
                 )
                 "onboarding" -> OnboardingScreen(
-                    onComplete = { currentScreen = "super_admin_dashboard" } // Route to Super Admin dashboard to review modules
+                    onComplete = { currentScreen = "super_admin_shell" } // Route to Super Admin dashboard to review modules
                 )
-                "super_admin_dashboard" -> SuperAdminDashboardScreen(
-                    onNavigateToPlans = { currentScreen = "super_admin_plans" },
-                    onNavigateToUsers = { currentScreen = "super_admin_users" },
-                    onNavigateToAuditLogs = { currentScreen = "super_admin_logs" }
-                )
-                "super_admin_plans" -> PlansPricingScreen(
-                    onBack = { currentScreen = "super_admin_dashboard" }
-                )
-                "super_admin_users" -> UsersManagementScreen(
-                    onBack = { currentScreen = "super_admin_dashboard" }
-                )
-                "super_admin_logs" -> AuditLogsScreen(
-                    onBack = { currentScreen = "super_admin_dashboard" }
-                )
+                "super_admin_shell" -> SuperAdminShell()
                 "dashboard" -> AnalyticsDashboardScreen()
             }
         }
