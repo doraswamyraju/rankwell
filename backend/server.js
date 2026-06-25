@@ -39,7 +39,7 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'healthy',
     timestamp: new Date(),
-    service: 'ReviewFlow AI Backend'
+    service: 'RankWell Backend (a product of RGV)'
   });
 });
 

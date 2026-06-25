@@ -1,7 +1,7 @@
 {
-  "name": "reviewflow-ai-backend",
+  "name": "rankwell-backend",
   "version": "1.0.0",
-  "description": "Backend services for ReviewFlow AI",
+  "description": "Backend services for RankWell (a product of RGV)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

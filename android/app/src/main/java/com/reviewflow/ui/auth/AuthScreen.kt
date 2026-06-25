@@ -48,14 +48,14 @@ fun AuthScreen(
         ) {
             // Header Logo text
             Text(
-                text = "ReviewFlow AI",
+                text = "RankWell",
                 color = Color.White,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
             )
             
             Text(
-                text = "Increase reviews with AI assistance",
+                text = "A product of RGV",
                 color = Color.Gray,
                 fontSize = 14.sp
             )

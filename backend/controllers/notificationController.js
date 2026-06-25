@@ -27,7 +27,7 @@ exports.sendTestNotification = async (req, res) => {
   try {
     const result = await sendPushNotification(
       req.user._id,
-      title || 'ReviewFlow AI Test',
+      title || 'RankWell Test',
       body || 'This is a test notification from your server!',
       { type: 'test' }
     );

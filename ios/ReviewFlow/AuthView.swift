@@ -27,12 +27,12 @@ struct AuthView: View {
                             )
                         )
                     
-                    Text("ReviewFlow AI")
+                    Text("RankWell")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                     
-                    Text("Increase your reviews with AI assistance")
+                    Text("A product of RGV")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }
