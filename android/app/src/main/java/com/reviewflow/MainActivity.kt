@@ -22,7 +22,9 @@ class MainActivity : ComponentActivity() {
                 "onboarding" -> OnboardingScreen(
                     onComplete = { currentScreen = "super_admin_shell" } // Route to Super Admin dashboard to review modules
                 )
-                "super_admin_shell" -> SuperAdminShell()
+                "super_admin_shell" -> SuperAdminShell(
+                    onLogOut = { currentScreen = "auth" }
+                )
                 "dashboard" -> AnalyticsDashboardScreen()
             }
         }

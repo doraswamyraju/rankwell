@@ -13,8 +13,31 @@ app.use(cors());
 app.use(express.json());
 
 // Database and Firebase Initialization
-connectDB();
+connectDB().then(() => {
+  seedAdmin();
+});
 initializeFirebase();
+
+async function seedAdmin() {
+  try {
+    const User = require('./models/User');
+    const bcrypt = require('bcryptjs');
+    const adminExists = await User.findOne({ email: 'doraswamyraju.ca@gmail.com' });
+    if (!adminExists) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash('BOHPM6139n@', salt);
+      await User.create({
+        name: 'Super Admin',
+        email: 'doraswamyraju.ca@gmail.com',
+        password: hashedPassword,
+        role: 'admin'
+      });
+      console.log('Super Admin user seeded successfully.');
+    }
+  } catch (error) {
+    console.error('Failed to seed Super Admin user:', error.message);
+  }
+}
 
 // Routes
 const authRoutes = require('./routes/authRoutes');

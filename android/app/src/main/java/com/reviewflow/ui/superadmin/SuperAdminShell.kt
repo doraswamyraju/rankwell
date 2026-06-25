@@ -18,9 +18,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 
+import androidx.compose.material.icons.filled.ExitToApp
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SuperAdminShell() {
+fun SuperAdminShell(
+    onLogOut: () -> Unit
+) {
     var activeSubScreen by remember { mutableStateOf("dashboard") } // dashboard, plans, users, logs
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -88,6 +92,19 @@ fun SuperAdminShell() {
                         scope.launch { drawerState.close() }
                     },
                     icon = { Icon(Icons.Default.Settings, contentDescription = null, tint = accentColor) },
+                    modifier = Modifier.padding(8.dp)
+                )
+
+                Spacer(modifier = Modifier.weight(1f)) // Push logout button to the bottom of drawer
+
+                NavigationDrawerItem(
+                    label = { Text("Log Out", color = Color.Red) },
+                    selected = false,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                        onLogOut()
+                    },
+                    icon = { Icon(Icons.Default.ExitToApp, contentDescription = "Log Out", tint = Color.Red) },
                     modifier = Modifier.padding(8.dp)
                 )
             }
