@@ -8,6 +8,7 @@ import com.reviewflow.ui.auth.AuthScreen
 import com.reviewflow.ui.onboarding.OnboardingScreen
 import com.reviewflow.ui.dashboard.AnalyticsDashboardScreen
 import com.reviewflow.ui.superadmin.SuperAdminShell
+import com.reviewflow.ui.businessowner.BusinessOwnerShell
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +32,9 @@ class MainActivity : ComponentActivity() {
                 "super_admin_shell" -> SuperAdminShell(
                     onLogOut = { currentScreen = "auth" }
                 )
-                "dashboard" -> AnalyticsDashboardScreen()
+                "dashboard" -> BusinessOwnerShell(
+                    onLogOut = { currentScreen = "auth" }
+                )
             }
         }
     }
