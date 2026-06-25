@@ -22,6 +22,8 @@ async function seedAdmin() {
   try {
     const User = require('./models/User');
     const bcrypt = require('bcryptjs');
+    
+    // 1. Seed Super Admin
     const adminExists = await User.findOne({ email: 'doraswamyraju.ca@gmail.com' });
     if (!adminExists) {
       const salt = await bcrypt.genSalt(10);
@@ -34,8 +36,22 @@ async function seedAdmin() {
       });
       console.log('Super Admin user seeded successfully.');
     }
+
+    // 2. Seed Business Owner (Rajugari Ventures)
+    const ownerExists = await User.findOne({ email: 'rajugariventures@gmail.com' });
+    if (!ownerExists) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash('BOHPM6139n@', salt);
+      await User.create({
+        name: 'Rajugari Ventures',
+        email: 'rajugariventures@gmail.com',
+        password: hashedPassword,
+        role: 'owner'
+      });
+      console.log('Business Owner user seeded successfully.');
+    }
   } catch (error) {
-    console.error('Failed to seed Super Admin user:', error.message);
+    console.error('Failed to seed users:', error.message);
   }
 }
 
