@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthScreen(
-    onAuthSuccess: () -> Unit
+    onAuthSuccess: (role: String) -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -113,8 +113,12 @@ fun AuthScreen(
             Button(
                 onClick = {
                     isLoading = true
-                    // Mock auth API callback
-                    onAuthSuccess()
+                    // Mock auth API callback matching configured seed credentials
+                    if (email.trim() == "doraswamyraju.ca@gmail.com") {
+                        onAuthSuccess("admin")
+                    } else {
+                        onAuthSuccess("owner")
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

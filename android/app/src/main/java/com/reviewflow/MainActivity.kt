@@ -17,10 +17,16 @@ class MainActivity : ComponentActivity() {
             
             when (currentScreen) {
                 "auth" -> AuthScreen(
-                    onAuthSuccess = { currentScreen = "onboarding" }
+                    onAuthSuccess = { role ->
+                        if (role == "admin") {
+                            currentScreen = "super_admin_shell"
+                        } else {
+                            currentScreen = "onboarding"
+                        }
+                    }
                 )
                 "onboarding" -> OnboardingScreen(
-                    onComplete = { currentScreen = "super_admin_shell" } // Route to Super Admin dashboard to review modules
+                    onComplete = { currentScreen = "dashboard" }
                 )
                 "super_admin_shell" -> SuperAdminShell(
                     onLogOut = { currentScreen = "auth" }
