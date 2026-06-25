@@ -26,17 +26,18 @@ fun AuthScreen(
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
+    // Premium Light Mode Palette
+    val lightBg = Color(0xFFF8F9FA)
+    val lightSurface = Color.White
+    val lightTextPrimary = Color(0xFF212529)
+    val lightTextSecondary = Color(0xFF6C757D)
+    val accentColor = Color(0xFFFF8C00) // RankWell Orange
+    val gradientColors = listOf(Color(0xFFFF8C00), Color(0xFFFF4500))
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF0F0F1A),
-                        Color(0xFF1E102F)
-                    )
-                )
-            ),
+            .background(lightBg),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -46,105 +47,139 @@ fun AuthScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Header Logo text
-            Text(
-                text = "RankWell",
-                color = Color.White,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
-            )
-            
-            Text(
-                text = "A product of RGV",
-                color = Color.Gray,
-                fontSize = 14.sp
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            if (isSignUp) {
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text("Name", color = Color.Gray) },
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedBorderColor = Color(0xFFFF8C00),
-                        unfocusedBorderColor = Color.DarkGray
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Email", color = Color.Gray) },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedBorderColor = Color(0xFFFF8C00),
-                    unfocusedBorderColor = Color.DarkGray
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Password", color = Color.Gray) },
-                visualTransformation = PasswordVisualTransformation(),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedBorderColor = Color(0xFFFF8C00),
-                    unfocusedBorderColor = Color.DarkGray
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            if (errorMessage.isNotEmpty()) {
-                Text(errorMessage, color = Color.Red, fontSize = 12.sp)
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(
-                onClick = {
-                    isLoading = true
-                    // Mock auth API callback matching configured seed credentials
-                    if (email.trim() == "doraswamyraju.ca@gmail.com") {
-                        onAuthSuccess("admin")
-                    } else {
-                        onAuthSuccess("owner")
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF4500)
-                )
+            // Header Typography logo
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                if (isLoading) {
-                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
-                } else {
-                    Text(
-                        text = if (isSignUp) "Create Account" else "Sign In",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
-                }
+                Text(
+                    text = "RankWell",
+                    color = lightTextPrimary,
+                    fontSize = 36.sp,
+                    fontWeight = FontWeight.Black
+                )
+                Text(
+                    text = "A product of RGV",
+                    color = lightTextSecondary,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium
+                )
             }
 
-            TextButton(onClick = { isSignUp = !isSignUp }) {
-                Text(
-                    text = if (isSignUp) "Already have an account? Sign In" else "Don't have an account? Sign Up",
-                    color = Color(0xFFFF8C00)
-                )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // White Elevation Container Card
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = lightSurface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = if (isSignUp) "Create Account" else "Welcome Back",
+                        color = lightTextPrimary,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp)
+                    )
+
+                    if (isSignUp) {
+                        OutlinedTextField(
+                            value = name,
+                            onValueChange = { name = it },
+                            label = { Text("Full Name") },
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedTextColor = lightTextPrimary,
+                                unfocusedTextColor = lightTextPrimary,
+                                focusedBorderColor = accentColor,
+                                unfocusedBorderColor = Color.LightGray
+                            ),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
+                    OutlinedTextField(
+                        value = email,
+                        onValueChange = { email = it },
+                        label = { Text("Email Address") },
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedTextColor = lightTextPrimary,
+                            unfocusedTextColor = lightTextPrimary,
+                            focusedBorderColor = accentColor,
+                            unfocusedBorderColor = Color.LightGray
+                        ),
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = { Text("Password") },
+                        visualTransformation = PasswordVisualTransformation(),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedTextColor = lightTextPrimary,
+                            unfocusedTextColor = lightTextPrimary,
+                            focusedBorderColor = accentColor,
+                            unfocusedBorderColor = Color.LightGray
+                        ),
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    if (errorMessage.isNotEmpty()) {
+                        Text(errorMessage, color = Color.Red, fontSize = 12.sp)
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Gradient Submit Button
+                    Button(
+                        onClick = {
+                            isLoading = true
+                            // Trigger callback matching credential seed roles
+                            if (email.trim() == "doraswamyraju.ca@gmail.com") {
+                                onAuthSuccess("admin")
+                            } else {
+                                onAuthSuccess("owner")
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
+                            .background(
+                                Brush.horizontalGradient(colors = gradientColors),
+                                shape = RoundedCornerShape(10.dp)
+                            ),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        if (isLoading) {
+                            CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+                        } else {
+                            Text(
+                                text = if (isSignUp) "Sign Up" else "Log In",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp
+                            )
+                        }
+                    }
+
+                    TextButton(onClick = { isSignUp = !isSignUp }) {
+                        Text(
+                            text = if (isSignUp) "Already have an account? Log In" else "Don't have an account? Sign Up",
+                            color = accentColor,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
             }
         }
     }
