@@ -73,7 +73,7 @@ fun AnalyticsDashboardScreen() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White.opacity(0.03f), shape = RoundedCornerShape(16.dp))
+                    .background(Color.White.copy(alpha = 0.03f), shape = RoundedCornerShape(16.dp))
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
@@ -93,7 +93,7 @@ fun AnalyticsDashboardScreen() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White.opacity(0.03f), shape = RoundedCornerShape(16.dp))
+                    .background(Color.White.copy(alpha = 0.03f), shape = RoundedCornerShape(16.dp))
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -126,7 +126,7 @@ fun MetricCard(
 ) {
     Card(
         modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = Color.White.opacity(0.03f))
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.03f))
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -168,7 +168,7 @@ fun FunnelBar(label: String, count: Int, percent: Int) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(8.dp)
-                .background(Color.White.opacity(0.1f), shape = RoundedCornerShape(4.dp))
+                .background(Color.White.copy(alpha = 0.1f), shape = RoundedCornerShape(4.dp))
         ) {
             Box(
                 modifier = Modifier
@@ -191,5 +191,4 @@ fun ModeStat(label: String, count: Int, color: Color) {
     }
 }
 
-private val Float.opacity: Float
-    get() = this
+

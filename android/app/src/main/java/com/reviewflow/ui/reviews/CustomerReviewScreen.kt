@@ -72,7 +72,7 @@ fun CustomerReviewScreen() {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White.opacity(0.1f), shape = RoundedCornerShape(8.dp))
+                    .background(Color.White.copy(alpha = 0.1f), shape = RoundedCornerShape(8.dp))
                     .padding(4.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
@@ -95,7 +95,7 @@ fun CustomerReviewScreen() {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.White.opacity(0.03f), shape = RoundedCornerShape(16.dp))
+                        .background(Color.White.copy(alpha = 0.03f), shape = RoundedCornerShape(16.dp))
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
@@ -142,7 +142,7 @@ fun CustomerReviewScreen() {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.White.opacity(0.03f), shape = RoundedCornerShape(16.dp))
+                        .background(Color.White.copy(alpha = 0.03f), shape = RoundedCornerShape(16.dp))
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
@@ -237,7 +237,7 @@ fun CustomerReviewScreen() {
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text("Your Draft Review:", color = Color.White, fontWeight = FontWeight.Bold)
-                        Text(aiDraft, color = Color.White.opacity(0.8f))
+                        Text(aiDraft, color = Color.White.copy(alpha = 0.8f))
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -276,6 +276,4 @@ fun CustomerReviewScreen() {
     }
 }
 
-// Inline extension mapping for opacity values in Compose
-private val Float.opacity: Float
-    get() = this
+
