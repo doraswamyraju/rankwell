@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,7 +25,9 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomerReviewScreen() {
+fun CustomerReviewScreen(
+    onBack: () -> Unit
+) {
     val context = LocalContext.current
     var selectedMode by remember { mutableStateOf("Smart") } // Custom, Smart, Ultra Smart
     
@@ -60,12 +64,18 @@ fun CustomerReviewScreen() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Header
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Share Your Feedback", color = Color.Gray, fontSize = 16.sp)
-                Text("Blue Bottle Coffee", color = Color(0xFFFF8C00), fontSize = 28.sp, fontWeight = FontWeight.Bold)
+                IconButton(onClick = onBack) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Column(horizontalAlignment = Alignment.End) {
+                    Text("Share Your Feedback", color = Color.Gray, fontSize = 12.sp)
+                    Text("RankWell review", color = Color(0xFFFF8C00), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                }
             }
 
             // Tab Selector

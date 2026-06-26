@@ -15,7 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SubscriptionScreen() {
+fun SubscriptionScreen(
+    onNavigateToShop: () -> Unit
+) {
     val lightTextPrimary = Color(0xFF212529)
     val lightTextSecondary = Color(0xFF6C757D)
     val accentColor = Color(0xFFFF8C00)
@@ -70,7 +72,7 @@ fun SubscriptionScreen() {
                         Text("WhatsApp: 152 / 5000", color = lightTextSecondary, fontSize = 12.sp)
                     }
                     Button(
-                        onClick = { /* Upgrade Trigger */ },
+                        onClick = onNavigateToShop,
                         colors = ButtonDefaults.buttonColors(containerColor = accentColor),
                         shape = RoundedCornerShape(8.dp)
                     ) {
@@ -81,3 +83,4 @@ fun SubscriptionScreen() {
         }
     }
 }
+

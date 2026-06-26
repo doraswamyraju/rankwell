@@ -9,6 +9,8 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -16,14 +18,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.reviewflow.ui.reviews.CustomerReviewScreen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BusinessOwnerShell(
+    initialBusinessName: String,
+    initialReviewUrl: String,
     onLogOut: () -> Unit
 ) {
-    var activeSubScreen by remember { mutableStateOf("dashboard") } // dashboard, campaigns, contacts, subscription
+    var activeSubScreen by remember { mutableStateOf("dashboard") } // dashboard, campaigns, contacts, subscription, designer, builder, shop
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -72,6 +77,17 @@ fun BusinessOwnerShell(
                 )
 
                 NavigationDrawerItem(
+                    label = { Text("Landing Page Builder", color = lightTextPrimary) },
+                    selected = activeSubScreen == "builder",
+                    onClick = {
+                        activeSubScreen = "builder"
+                        scope.launch { drawerState.close() }
+                    },
+                    icon = { Icon(Icons.Default.Edit, contentDescription = null, tint = accentColor) },
+                    modifier = Modifier.padding(8.dp)
+                )
+
+                NavigationDrawerItem(
                     label = { Text("Customer Contacts", color = lightTextPrimary) },
                     selected = activeSubScreen == "contacts",
                     onClick = {
@@ -79,6 +95,17 @@ fun BusinessOwnerShell(
                         scope.launch { drawerState.close() }
                     },
                     icon = { Icon(Icons.Default.Person, contentDescription = null, tint = accentColor) },
+                    modifier = Modifier.padding(8.dp)
+                )
+
+                NavigationDrawerItem(
+                    label = { Text("Shop Add-ons / NFC", color = lightTextPrimary) },
+                    selected = activeSubScreen == "shop",
+                    onClick = {
+                        activeSubScreen = "shop"
+                        scope.launch { drawerState.close() }
+                    },
+                    icon = { Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = accentColor) },
                     modifier = Modifier.padding(8.dp)
                 )
 
@@ -110,88 +137,111 @@ fun BusinessOwnerShell(
     ) {
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = when (activeSubScreen) {
-                                "dashboard" -> "Business Dashboard"
-                                "campaigns" -> "QR Review Campaigns"
-                                "contacts" -> "Target Contacts"
-                                "subscription" -> "Billing Overview"
-                                else -> "RankWell"
-                            },
-                            color = lightTextPrimary,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Default.Menu, contentDescription = "Open Sidebar", tint = lightTextPrimary)
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = lightSurface)
-                )
+                if (activeSubScreen != "designer" && activeSubScreen != "builder" && activeSubScreen != "shop") {
+                    TopAppBar(
+                        title = {
+                            Text(
+                                text = when (activeSubScreen) {
+                                    "dashboard" -> "Business Dashboard"
+                                    "campaigns" -> "QR Review Campaigns"
+                                    "contacts" -> "Target Contacts"
+                                    "subscription" -> "Billing Overview"
+                                    else -> "RankWell"
+                                },
+                                color = lightTextPrimary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp
+                            )
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                Icon(Icons.Default.Menu, contentDescription = "Open Sidebar", tint = lightTextPrimary)
+                            }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(containerColor = lightSurface)
+                    )
+                }
             },
             bottomBar = {
-                NavigationBar(
-                    containerColor = lightSurface
-                ) {
-                    NavigationBarItem(
-                        selected = activeSubScreen == "dashboard",
-                        onClick = { activeSubScreen = "dashboard" },
-                        icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                        label = { Text("Stats", fontSize = 10.sp) },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = accentColor,
-                            selectedTextColor = accentColor,
-                            unselectedIconColor = Color.Gray,
-                            unselectedTextColor = Color.Gray
+                if (activeSubScreen != "designer" && activeSubScreen != "builder" && activeSubScreen != "shop") {
+                    NavigationBar(
+                        containerColor = lightSurface
+                    ) {
+                        NavigationBarItem(
+                            selected = activeSubScreen == "dashboard",
+                            onClick = { activeSubScreen = "dashboard" },
+                            icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+                            label = { Text("Stats", fontSize = 10.sp) },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = accentColor,
+                                selectedTextColor = accentColor,
+                                unselectedIconColor = Color.Gray,
+                                unselectedTextColor = Color.Gray
+                            )
                         )
-                    )
-                    NavigationBarItem(
-                        selected = activeSubScreen == "campaigns",
-                        onClick = { activeSubScreen = "campaigns" },
-                        icon = { Icon(Icons.Default.List, contentDescription = "Campaigns") },
-                        label = { Text("QR codes", fontSize = 10.sp) },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = accentColor,
-                            selectedTextColor = accentColor,
-                            unselectedIconColor = Color.Gray,
-                            unselectedTextColor = Color.Gray
+                        NavigationBarItem(
+                            selected = activeSubScreen == "campaigns",
+                            onClick = { activeSubScreen = "campaigns" },
+                            icon = { Icon(Icons.Default.List, contentDescription = "Campaigns") },
+                            label = { Text("QR codes", fontSize = 10.sp) },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = accentColor,
+                                selectedTextColor = accentColor,
+                                unselectedIconColor = Color.Gray,
+                                unselectedTextColor = Color.Gray
+                            )
                         )
-                    )
-                    NavigationBarItem(
-                        selected = activeSubScreen == "contacts",
-                        onClick = { activeSubScreen = "contacts" },
-                        icon = { Icon(Icons.Default.Person, contentDescription = "Contacts") },
-                        label = { Text("Contacts", fontSize = 10.sp) },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = accentColor,
-                            selectedTextColor = accentColor,
-                            unselectedIconColor = Color.Gray,
-                            unselectedTextColor = Color.Gray
+                        NavigationBarItem(
+                            selected = activeSubScreen == "contacts",
+                            onClick = { activeSubScreen = "contacts" },
+                            icon = { Icon(Icons.Default.Person, contentDescription = "Contacts") },
+                            label = { Text("Contacts", fontSize = 10.sp) },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = accentColor,
+                                selectedTextColor = accentColor,
+                                unselectedIconColor = Color.Gray,
+                                unselectedTextColor = Color.Gray
+                            )
                         )
-                    )
+                    }
                 }
             }
         ) { innerPadding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
+                    .padding(if (activeSubScreen == "designer" || activeSubScreen == "builder" || activeSubScreen == "shop" || activeSubScreen == "customer_review") PaddingValues(0.dp) else innerPadding)
                     .background(lightBg)
             ) {
                 when (activeSubScreen) {
                     "dashboard" -> BusinessDashboardScreen(
+                        initialBusinessName = initialBusinessName,
+                        initialReviewUrl = initialReviewUrl,
                         onNavigateToCampaigns = { activeSubScreen = "campaigns" },
-                        onNavigateToContacts = { activeSubScreen = "contacts" }
+                        onNavigateToContacts = { activeSubScreen = "contacts" },
+                        onNavigateToBuilder = { activeSubScreen = "builder" },
+                        onPreviewLanding = { activeSubScreen = "customer_review" }
                     )
                     "campaigns" -> CampaignsScreen(
-                        onNavigateToDesigner = { /* Route to QR Customizer screen */ }
+                        onNavigateToDesigner = { activeSubScreen = "designer" }
                     )
                     "contacts" -> ContactsScreen()
-                    "subscription" -> SubscriptionScreen()
+                    "subscription" -> SubscriptionScreen(
+                        onNavigateToShop = { activeSubScreen = "shop" }
+                    )
+                    "designer" -> QrDesignerScreen(
+                        reviewUrl = initialReviewUrl,
+                        onBack = { activeSubScreen = "campaigns" }
+                    )
+                    "builder" -> LandingPageBuilderScreen(
+                        onBack = { activeSubScreen = "dashboard" }
+                    )
+                    "shop" -> ShopAddonsScreen(
+                        onBack = { activeSubScreen = "subscription" }
+                    )
+                    "customer_review" -> CustomerReviewScreen(
+                        onBack = { activeSubScreen = "dashboard" }
+                    )
                 }
             }
         }

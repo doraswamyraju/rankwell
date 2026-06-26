@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingScreen(
-    onComplete: () -> Unit
+    onComplete: (String, String) -> Unit
 ) {
     var businessName by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
@@ -106,8 +106,8 @@ fun OnboardingScreen(
                 Button(
                     onClick = {
                         isResolving = true
-                        // Mock resolving
-                        placeId = "ChIJu46S-uB-hYGRwT3QyP6Wj2Y"
+                        // Mock resolving using Space Needle (Real Place ID to prevent 404)
+                        placeId = "ChIJyTMQ5lhGkFQR8h5s5wZyC-c"
                         generatedReviewUrl = "https://search.google.com/local/writereview?placeid=$placeId"
                         isResolving = false
                         isPreviewActive = true
@@ -146,7 +146,7 @@ fun OnboardingScreen(
             Button(
                 onClick = {
                     isSaving = true
-                    onComplete()
+                    onComplete(businessName, generatedReviewUrl)
                 },
                 enabled = businessName.isNotEmpty() && googleMapsUrl.isNotEmpty() && !isSaving,
                 modifier = Modifier

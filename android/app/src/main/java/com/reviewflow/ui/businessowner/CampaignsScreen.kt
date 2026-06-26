@@ -2,12 +2,13 @@ package com.reviewflow.ui.businessowner
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +24,8 @@ fun CampaignsScreen(
     val lightTextSecondary = Color(0xFF6C757D)
     val accentColor = Color(0xFFFF8C00)
 
+    var selectedCampaignTab by remember { mutableStateOf(0) } // 0: QR Channels, 1: Messaging Channels
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -35,7 +38,7 @@ fun CampaignsScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Campaigns ledger", color = lightTextSecondary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Text("Campaigns Ledger", color = lightTextSecondary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
             Button(
                 onClick = onNavigateToDesigner,
                 colors = ButtonDefaults.buttonColors(containerColor = accentColor),
@@ -45,11 +48,32 @@ fun CampaignsScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        TabRow(
+            selectedTabIndex = selectedCampaignTab,
+            containerColor = Color.Transparent,
+            contentColor = accentColor
+        ) {
+            Tab(selected = selectedCampaignTab == 0, onClick = { selectedCampaignTab = 0 }) {
+                Text("QR / Physical Channels", modifier = Modifier.padding(12.dp), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            }
+            Tab(selected = selectedCampaignTab == 1, onClick = { selectedCampaignTab = 1 }) {
+                Text("SMS / WhatsApp Channels", modifier = Modifier.padding(12.dp), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            }
+        }
 
-        CampaignItemLight(name = "Table Tent QR", type = "Table QR", scans = 84, conversions = 52)
-        CampaignItemLight(name = "Receipt Print QR", type = "Receipt QR", scans = 42, conversions = 28)
-        CampaignItemLight(name = "Window Sticker QR", type = "Poster QR", scans = 22, conversions = 12)
+        Spacer(modifier = Modifier.height(4.dp))
+
+        if (selectedCampaignTab == 0) {
+            CampaignItemLight(name = "Table Tent QR", type = "Table QR", scans = 84, conversions = 52)
+            CampaignItemLight(name = "Receipt Print QR", type = "Receipt QR", scans = 42, conversions = 28)
+            CampaignItemLight(name = "Window Sticker QR", type = "Poster QR", scans = 22, conversions = 12)
+            CampaignItemLight(name = "NFC Table Card", type = "NFC Card", scans = 64, conversions = 48)
+            CampaignItemLight(name = "Invoice Print QR", type = "Invoice QR", scans = 15, conversions = 9)
+        } else {
+            CampaignItemLight(name = "Weekend SMS Blast", type = "SMS Campaign", scans = 180, conversions = 32)
+            CampaignItemLight(name = "Post-Purchase WhatsApp", type = "WhatsApp Campaign", scans = 310, conversions = 76)
+            CampaignItemLight(name = "Email Review Invites", type = "Email Campaign", scans = 95, conversions = 14)
+        }
     }
 }
 
@@ -75,7 +99,7 @@ fun CampaignItemLight(
                 Text(name, color = Color(0xFF212529), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 Text("Type: $type", color = Color(0xFF6C757D), fontSize = 12.sp)
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Text("Scans: $scans", color = Color.Gray, fontSize = 11.sp)
+                    Text("Scans/Clicks: $scans", color = Color.Gray, fontSize = 11.sp)
                     Text("Conversions: $conversions", color = Color(0xFFFF8C00), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
             }
@@ -88,3 +112,4 @@ fun CampaignItemLight(
         }
     }
 }
+
