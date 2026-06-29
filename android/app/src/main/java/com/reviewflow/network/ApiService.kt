@@ -8,7 +8,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 object ApiService {
-    private const val BASE_URL = "http://147.93.107.21:5000/api" // VPS IP mapping
+    private const val BASE_URL = "http://147.93.107.21:5007/api" // VPS IP mapping
     private var token: String? = null
 
     fun setToken(newToken: String?) {
