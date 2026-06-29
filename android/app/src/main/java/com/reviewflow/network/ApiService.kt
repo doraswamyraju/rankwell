@@ -60,6 +60,35 @@ object ApiService {
         makePostRequest(url, payload, useAuth = true)
     }
 
+    suspend fun searchGooglePlaces(query: String): org.json.JSONArray = withContext(Dispatchers.IO) {
+        val url = URL("$BASE_URL/businesses/search-google?query=${java.net.URLEncoder.encode(query, "UTF-8")}")
+        val responseString = makeGetRequest(url, useAuth = true)
+        org.json.JSONArray(responseString)
+    }
+
+    private fun makeGetRequest(url: URL, useAuth: Boolean): String {
+        val connection = url.openConnection() as HttpURLConnection
+        try {
+            connection.requestMethod = "GET"
+            connection.setRequestProperty("Accept", "application/json")
+
+            if (useAuth && token != null) {
+                connection.setRequestProperty("Authorization", "Bearer $token")
+            }
+
+            val responseCode = connection.responseCode
+            val stream = if (responseCode in 200..299) {
+                connection.inputStream
+            } else {
+                connection.errorStream
+            }
+
+            return stream.bufferedReader().use { it.readText() }
+        } finally {
+            connection.disconnect()
+        }
+    }
+
     private fun makePostRequest(url: URL, payload: JSONObject, useAuth: Boolean): JSONObject {
         val connection = url.openConnection() as HttpURLConnection
         try {

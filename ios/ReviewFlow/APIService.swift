@@ -118,4 +118,28 @@ class APIService: ObservableObject {
         }
         throw APIError.parsingError
     }
+    
+    func searchGoogleBusinesses(query: String) async throws -> [[String: Any]] {
+        var components = URLComponents(string: "\(baseURL)/businesses/search-google")
+        components?.queryItems = [URLQueryItem(name: "query", value: query)]
+        
+        guard let url = components?.url else { throw APIError.invalidURL }
+        guard let token = token else { throw APIError.serverError("No active session") }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+            throw APIError.serverError("Search failed")
+        }
+        
+        if let json = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
+            return json
+        }
+        throw APIError.parsingError
+    }
 }

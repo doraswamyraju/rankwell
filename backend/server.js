@@ -5,12 +5,21 @@ const helmet = require('helmet');
 const connectDB = require('./config/db');
 const { initializeFirebase } = require('./config/firebase');
 
+const path = require('path');
 const app = express();
 
 // Middlewares
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false // Disable CSP to allow Tailwind CDN & Google Fonts
+}));
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Client review landing page route
+app.get('/review/:id', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'review.html'));
+});
 
 // Database and Firebase Initialization
 connectDB().then(() => {

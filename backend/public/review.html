@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Share Your Feedback - ReviewFlow AI</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(135deg, #0F0F1A 0%, #1E102F 100%);
+      min-height: 100vh;
+      color: #FFFFFF;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    .glass-input:focus {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #FF8C00;
+      outline: none;
+      box-shadow: 0 0 10px rgba(255, 140, 0, 0.2);
+    }
+  </style>
+</head>
+<body class="flex flex-col justify-between p-6">
+
+  <!-- Header -->
+  <header class="flex justify-between items-center w-full max-w-md mx-auto mb-6">
+    <div class="flex items-center space-x-2">
+      <div class="h-3 w-3 rounded-full bg-orange-500 animate-pulse"></div>
+      <span class="text-xs uppercase tracking-widest text-gray-400 font-semibold">ReviewFlow AI</span>
+    </div>
+    <span class="text-xs bg-orange-500/10 text-orange-400 px-3 py-1 rounded-full font-bold">Secure Flow</span>
+  </header>
+
+  <!-- Main Content -->
+  <main class="w-full max-w-md mx-auto flex-1 flex flex-col justify-center">
+    <div class="glass-card rounded-2xl p-6 shadow-2xl mb-8">
+      
+      <!-- Business Info -->
+      <div class="text-center mb-6">
+        <h1 id="business-name" class="text-2xl font-extrabold tracking-tight text-white mb-1">Loading Business...</h1>
+        <p id="business-address" class="text-xs text-gray-400">Please wait while we load details.</p>
+      </div>
+
+      <!-- Mode Tabs -->
+      <div class="flex bg-white/5 p-1 rounded-xl mb-6">
+        <button id="tab-smart" onclick="switchTab('smart')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-orange-500 text-white">
+          Smart AI
+        </button>
+        <button id="tab-ultra" onclick="switchTab('ultra')" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition-all">
+          Ultra Smart
+        </button>
+        <button id="tab-manual" onclick="switchTab('manual')" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition-all">
+          Direct
+        </button>
+      </div>
+
+      <!-- Form container -->
+      <div id="forms-wrapper">
+        
+        <!-- Smart AI Review View -->
+        <div id="form-smart" class="space-y-4">
+          <p class="text-xs text-gray-300">Answer 2 simple questions, and our AI will draft a compelling review for you!</p>
+          
+          <div>
+            <label class="block text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-2">What did you order or enjoy most?</label>
+            <input type="text" id="smart-q1" placeholder="e.g. Latte & Almond Croissant" class="glass-input w-full px-4 py-3 rounded-xl text-sm text-white placeholder-gray-500">
+          </div>
+          
+          <div>
+            <label class="block text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-2">Any comments about service or ambience?</label>
+            <input type="text" id="smart-q2" placeholder="e.g. Friendly staff, cozy window seating" class="glass-input w-full px-4 py-3 rounded-xl text-sm text-white placeholder-gray-500">
+          </div>
+
+          <button onclick="generateSmartReview()" class="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 py-3 rounded-xl font-bold text-sm transition-all shadow-lg shadow-orange-500/20 active:scale-[0.98]">
+            Generate Smart Review
+          </button>
+        </div>
+
+        <!-- Ultra Smart AI Review View -->
+        <div id="form-ultra" class="hidden space-y-4">
+          <p class="text-xs text-gray-300">Instant AI generation based on ratings, category, and tone.</p>
+          
+          <div>
+            <label class="block text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-2">Rating</label>
+            <div class="flex items-center space-x-2">
+              <input type="hidden" id="ultra-rating" value="5">
+              <span id="star-1" onclick="setRating(1)" class="text-2xl text-yellow-400 cursor-pointer">★</span>
+              <span id="star-2" onclick="setRating(2)" class="text-2xl text-yellow-400 cursor-pointer">★</span>
+              <span id="star-3" onclick="setRating(3)" class="text-2xl text-yellow-400 cursor-pointer">★</span>
+              <span id="star-4" onclick="setRating(4)" class="text-2xl text-yellow-400 cursor-pointer">★</span>
+              <span id="star-5" onclick="setRating(5)" class="text-2xl text-yellow-400 cursor-pointer">★</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-2">Service/Product Type</label>
+            <input type="text" id="ultra-service" placeholder="e.g. Coffee / Interior Design / Dental" class="glass-input w-full px-4 py-3 rounded-xl text-sm text-white placeholder-gray-500">
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-2">Tone</label>
+            <div class="flex space-x-3">
+              <button onclick="setTone('Friendly')" id="tone-Friendly" class="flex-1 py-2 text-xs font-bold rounded-lg bg-orange-500 text-white border border-orange-400/20 transition-all">Friendly</button>
+              <button onclick="setTone('Professional')" id="tone-Professional" class="flex-1 py-2 text-xs font-bold rounded-lg bg-white/5 text-gray-300 hover:text-white transition-all">Professional</button>
+            </div>
+          </div>
+
+          <button onclick="generateUltraReview()" class="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 py-3 rounded-xl font-bold text-sm transition-all shadow-lg shadow-orange-500/20 active:scale-[0.98]">
+            Generate Ultra Review
+          </button>
+        </div>
+
+        <!-- Direct Review View -->
+        <div id="form-manual" class="hidden text-center py-4 space-y-6">
+          <p class="text-xs text-gray-300">Prefers to write your own comment? No problem! Click the button below to directly open Google reviews.</p>
+          <button onclick="openGoogleDirect()" class="w-full bg-orange-500 hover:bg-orange-600 py-3 rounded-xl font-bold text-sm transition-all shadow-lg shadow-orange-500/20 active:scale-[0.98]">
+            Open Google Reviews Directly
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Generated Draft Section -->
+      <div id="draft-section" class="hidden mt-6 pt-6 border-t border-white/10 space-y-4">
+        <div class="p-4 bg-orange-500/5 rounded-xl border border-orange-500/10">
+          <h3 class="text-xs font-bold text-orange-400 uppercase tracking-wider mb-2">Your Draft Review</h3>
+          <p id="draft-text" class="text-sm leading-relaxed text-gray-200"></p>
+        </div>
+
+        <div class="flex space-x-3">
+          <button id="copy-btn" onclick="copyReview()" class="flex-1 bg-white/10 hover:bg-white/15 py-3 rounded-xl font-bold text-xs transition-all active:scale-[0.98]">
+            Copy Review
+          </button>
+          <button onclick="openGoogleDirect()" class="flex-1 bg-orange-500 hover:bg-orange-600 py-3 rounded-xl font-bold text-xs transition-all active:scale-[0.98]">
+            Paste on Google
+          </button>
+        </div>
+        <p class="text-[10px] text-center text-gray-400">Instructions: Click <strong>Copy Review</strong>, then tap <strong>Paste on Google</strong> to submit it on our profile.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full max-w-md mx-auto text-center mt-6">
+    <p class="text-[10px] text-gray-500">© 2026 RankWell AI. Powered by Rajugari Ventures.</p>
+  </footer>
+
+  <!-- Page Logic -->
+  <script>
+    let businessId = '';
+    let googleReviewUrl = '';
+    let selectedTone = 'Friendly';
+    
+    // Parse business ID from pathname (/review/:id)
+    const pathParts = window.location.pathname.split('/');
+    businessId = pathParts[pathParts.length - 1];
+
+    // Load business details
+    async function loadBusinessDetails() {
+      if (!businessId) {
+        document.getElementById('business-name').innerText = 'No Business Specified';
+        return;
+      }
+      try {
+        const response = await fetch(`/api/businesses/${businessId}/public`);
+        if (!response.ok) throw new Error('Business not found');
+        const data = await response.json();
+        
+        document.getElementById('business-name').innerText = data.name;
+        document.getElementById('business-address').innerText = data.address || 'Verified Google Listing';
+        googleReviewUrl = data.googleReviewUrl;
+      } catch (err) {
+        document.getElementById('business-name').innerText = 'Error Loading Business';
+        document.getElementById('business-address').innerText = 'Make sure the ID in your URL is correct.';
+        console.error(err);
+      }
+    }
+
+    // Tab switcher
+    function switchTab(mode) {
+      document.getElementById('form-smart').classList.add('hidden');
+      document.getElementById('form-ultra').classList.add('hidden');
+      document.getElementById('form-manual').classList.add('hidden');
+      document.getElementById('draft-section').classList.add('hidden');
+
+      document.getElementById('tab-smart').className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all text-gray-400 hover:text-white";
+      document.getElementById('tab-ultra').className = "flex-1 py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition-all";
+      document.getElementById('tab-manual').className = "flex-1 py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition-all";
+
+      document.getElementById(`form-${mode}`).classList.remove('hidden');
+      document.getElementById(`tab-${mode}`).className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-orange-500 text-white";
+    }
+
+    // Rating selector
+    function setRating(rating) {
+      document.getElementById('ultra-rating').value = rating;
+      for (let i = 1; i <= 5; i++) {
+        const star = document.getElementById(`star-${i}`);
+        if (i <= rating) {
+          star.classList.add('text-yellow-400');
+          star.classList.remove('text-gray-600');
+        } else {
+          star.classList.remove('text-yellow-400');
+          star.classList.add('text-gray-600');
+        }
+      }
+    }
+
+    // Tone selector
+    function setTone(tone) {
+      selectedTone = tone;
+      document.getElementById('tone-Friendly').className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white/5 text-gray-300 hover:text-white transition-all";
+      document.getElementById('tone-Professional').className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white/5 text-gray-300 hover:text-white transition-all";
+      document.getElementById(`tone-${tone}`).className = "flex-1 py-2 text-xs font-bold rounded-lg bg-orange-500 text-white border border-orange-400/20 transition-all";
+    }
+
+    // Generate Smart review
+    async function generateSmartReview() {
+      const q1 = document.getElementById('smart-q1').value;
+      const q2 = document.getElementById('smart-q2').value;
+      const answers = [];
+      if (q1) answers.push({ question: "enjoy", answer: `We ordered the ${q1}.` });
+      if (q2) answers.push({ question: "service", answer: `Regarding service, ${q2}.` });
+
+      try {
+        const response = await fetch('/api/ai/smart-draft', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ answers })
+        });
+        const data = await response.json();
+        showDraft(data.draft);
+      } catch (err) {
+        alert('Failed to generate AI Review. Please try again.');
+      }
+    }
+
+    // Generate Ultra review
+    async function generateUltraReview() {
+      const rating = document.getElementById('ultra-rating').value;
+      const service = document.getElementById('ultra-service').value || 'service';
+      try {
+        const response = await fetch('/api/ai/ultra-draft', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rating, service, tone: selectedTone })
+        });
+        const data = await response.json();
+        showDraft(data.draft);
+      } catch (err) {
+        alert('Failed to generate AI Review. Please try again.');
+      }
+    }
+
+    // Show draft review card
+    function showDraft(text) {
+      document.getElementById('draft-text').innerText = text;
+      document.getElementById('draft-section').classList.remove('hidden');
+      document.getElementById('copy-btn').innerText = "Copy Review";
+      document.getElementById('copy-btn').className = "flex-1 bg-white/10 hover:bg-white/15 py-3 rounded-xl font-bold text-xs transition-all active:scale-[0.98]";
+    }
+
+    // Copy to clipboard
+    function copyReview() {
+      const text = document.getElementById('draft-text').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const copyBtn = document.getElementById('copy-btn');
+        copyBtn.innerText = "Copied!";
+        copyBtn.className = "flex-1 bg-green-600 text-white py-3 rounded-xl font-bold text-xs transition-all active:scale-[0.98]";
+      }).catch(err => {
+        console.error('Could not copy text: ', err);
+      });
+    }
+
+    // Direct Google Redirect
+    function openGoogleDirect() {
+      if (googleReviewUrl) {
+        window.open(googleReviewUrl, '_blank');
+      } else {
+        alert('Direct Review Link not found for this business.');
+      }
+    }
+
+    // Initialize
+    window.onload = loadBusinessDetails;
+  </script>
+</body>
+</html>

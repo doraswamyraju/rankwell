@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.style.TextAlign
 import com.reviewflow.ui.superadmin.KpiCardLight
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,7 +73,7 @@ fun BusinessDashboardScreen(
 
         // Customer Scan QR Code Card
         val qrBitmap = remember(initialReviewUrl) {
-            QrCodeGenerator.generateQrBitmap(initialReviewUrl, size = 300)
+            QrCodeGenerator.generateQrBitmap(initialReviewUrl, size = 512)
         }
 
         Card(
@@ -81,18 +82,18 @@ fun BusinessDashboardScreen(
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
-            Row(
-                modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            Column(
+                modifier = Modifier.padding(20.dp).fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // QR Image
+                // QR Image (Larger Centered Size)
                 Box(
                     modifier = Modifier
-                        .size(100.dp)
-                        .background(Color.White, RoundedCornerShape(8.dp))
-                        .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
-                        .padding(4.dp),
+                        .size(180.dp)
+                        .background(Color.White, RoundedCornerShape(12.dp))
+                        .border(1.dp, Color(0xFFE9ECEF), RoundedCornerShape(12.dp))
+                        .padding(8.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     if (qrBitmap != null) {
@@ -107,18 +108,30 @@ fun BusinessDashboardScreen(
                 }
 
                 // Call to actions
-                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text("Customer Review QR Code", color = lightTextPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                    Text("Show this QR to customers. Scanning it opens the review feedback landing page.", color = lightTextSecondary, fontSize = 11.sp)
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text("Customer Review QR Code", color = lightTextPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Text(
+                        "Show this QR to customers. Scanning it opens the review feedback landing page.",
+                        color = lightTextSecondary,
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                    
+                    Spacer(modifier = Modifier.height(4.dp))
                     
                     Button(
                         onClick = onPreviewLanding,
                         colors = ButtonDefaults.buttonColors(containerColor = accentColor),
-                        shape = RoundedCornerShape(6.dp),
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-                        modifier = Modifier.height(28.dp)
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 10.dp),
+                        modifier = Modifier.height(38.dp)
                     ) {
-                        Text("Preview Scan Flow", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                        Text("Preview Scan Flow", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
