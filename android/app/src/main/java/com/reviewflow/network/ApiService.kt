@@ -8,7 +8,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 object ApiService {
-    private const val BASE_URL = "http://10.0.2.2:5000/api" // Emulator local IP mapping
+    private const val BASE_URL = "http://147.93.107.21:5000/api" // VPS IP mapping
     private var token: String? = null
 
     fun setToken(newToken: String?) {
