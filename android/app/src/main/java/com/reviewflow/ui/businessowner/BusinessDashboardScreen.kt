@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
+import com.reviewflow.network.ApiService
 import com.reviewflow.ui.superadmin.KpiCardLight
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -257,52 +258,175 @@ fun BusinessDashboardScreen(
     if (showAddBusinessDialog) {
         var tempName by remember { mutableStateOf("") }
         var tempMapsUrl by remember { mutableStateOf("") }
+        var selectedDialogTab by remember { mutableStateOf(0) } // 0 = Search, 1 = Paste Link
+        var dialogSearchQuery by remember { mutableStateOf("") }
+        var dialogSearchResults by remember { mutableStateOf<List<org.json.JSONObject>>(emptyList()) }
+        var isDialogSearching by remember { mutableStateOf(false) }
+        val scope = rememberCoroutineScope()
 
         AlertDialog(
             onDismissRequest = {
                 showAddBusinessDialog = false
                 isLinkExtracted = false
                 generatedReviewUrl = ""
+                dialogSearchResults = emptyList()
+                dialogSearchQuery = ""
             },
             title = { Text("Add Business Listing") },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text("Enter your business name and paste your Google Maps listing URL. We will parse and generate a direct Google review link.", color = lightTextSecondary, fontSize = 12.sp)
-                    
-                    OutlinedTextField(
-                        value = tempName,
-                        onValueChange = { tempName = it },
-                        label = { Text("Business Name") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = accentColor)
-                    )
-
-                    OutlinedTextField(
-                        value = tempMapsUrl,
-                        onValueChange = { tempMapsUrl = it },
-                        label = { Text("Google Maps Listing URL") },
-                        placeholder = { Text("https://maps.app.goo.gl/...") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = accentColor)
-                    )
-
-                    if (tempMapsUrl.isNotEmpty()) {
+                    // Dialog Tab Switcher
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.LightGray.copy(alpha = 0.2f), RoundedCornerShape(8.dp))
+                            .padding(2.dp)
+                    ) {
                         Button(
-                            onClick = {
-                                // Extract PlaceID Mock logic
-                                val parsedId = if (tempMapsUrl.contains("place/")) {
-                                    tempMapsUrl.split("place/").getOrNull(1)?.split("/")?.firstOrNull() ?: "ChIJyTMQ5lhGkFQR8h5s5wZyC-c"
-                                } else {
-                                    "ChIJyTMQ5lhGkFQR8h5s5wZyC-c" // Real fallback Place ID (Space Needle)
-                                }
-                                generatedReviewUrl = "https://search.google.com/local/writereview?placeid=$parsedId"
-                                isLinkExtracted = true
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
-                            shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier.fillMaxWidth()
+                            onClick = { selectedDialogTab = 0 },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (selectedDialogTab == 0) accentColor else Color.Transparent
+                            ),
+                            shape = RoundedCornerShape(6.dp),
+                            modifier = Modifier.weight(1f),
+                            contentPadding = PaddingValues(vertical = 4.dp)
                         ) {
-                            Text("Extract Review URL", color = Color.White)
+                            Text("Search Profile", color = if (selectedDialogTab == 0) Color.White else Color.Gray, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        }
+
+                        Button(
+                            onClick = { selectedDialogTab = 1 },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (selectedDialogTab == 1) accentColor else Color.Transparent
+                            ),
+                            shape = RoundedCornerShape(6.dp),
+                            modifier = Modifier.weight(1f),
+                            contentPadding = PaddingValues(vertical = 4.dp)
+                        ) {
+                            Text("Paste Link", color = if (selectedDialogTab == 1) Color.White else Color.Gray, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+
+                    if (selectedDialogTab == 0) {
+                        // Search Form
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text("Search business listing by name and location:", color = lightTextSecondary, fontSize = 11.sp)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                OutlinedTextField(
+                                    value = dialogSearchQuery,
+                                    onValueChange = { dialogSearchQuery = it },
+                                    placeholder = { Text("e.g. Starbucks Bangalore", fontSize = 12.sp) },
+                                    modifier = Modifier.weight(1f),
+                                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = accentColor)
+                                )
+
+                                Button(
+                                    onClick = {
+                                        if (dialogSearchQuery.isNotEmpty()) {
+                                            isDialogSearching = true
+                                            scope.launch {
+                                                try {
+                                                    val array = ApiService.searchGooglePlaces(dialogSearchQuery)
+                                                    val list = mutableListOf<org.json.JSONObject>()
+                                                    for (i in 0 until array.length()) {
+                                                        list.add(array.getJSONObject(i))
+                                                    }
+                                                    dialogSearchResults = list
+                                                } catch (e: Exception) {
+                                                    e.printStackTrace()
+                                                } finally {
+                                                    isDialogSearching = false
+                                                }
+                                            }
+                                        }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = accentColor),
+                                    shape = RoundedCornerShape(6.dp),
+                                    enabled = dialogSearchQuery.isNotEmpty() && !isDialogSearching
+                                ) {
+                                    if (isDialogSearching) {
+                                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(16.dp))
+                                    } else {
+                                        Text("Search", fontSize = 11.sp)
+                                    }
+                                }
+                            }
+
+                            if (dialogSearchResults.isNotEmpty()) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .heightIn(max = 150.dp)
+                                        .verticalScroll(rememberScrollState()),
+                                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    dialogSearchResults.forEach { item ->
+                                        val name = item.optString("name")
+                                        val addressVal = item.optString("formattedAddress")
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .background(Color.LightGray.copy(alpha = 0.15f), RoundedCornerShape(6.dp))
+                                                .clickable {
+                                                    tempName = name
+                                                    tempMapsUrl = item.optString("googleMapsUrl")
+                                                    generatedReviewUrl = item.optString("googleReviewUrl")
+                                                    isLinkExtracted = true
+                                                }
+                                                .padding(8.dp)
+                                        ) {
+                                            Text(name, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = lightTextPrimary)
+                                            Text(addressVal, fontSize = 10.sp, color = lightTextSecondary)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // Paste Link Form
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text("Enter your business name and paste your Google Maps listing URL. We will parse and generate a direct Google review link.", color = lightTextSecondary, fontSize = 12.sp)
+                            
+                            OutlinedTextField(
+                                value = tempName,
+                                onValueChange = { tempName = it },
+                                label = { Text("Business Name") },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = accentColor)
+                            )
+
+                            OutlinedTextField(
+                                value = tempMapsUrl,
+                                onValueChange = { tempMapsUrl = it },
+                                label = { Text("Google Maps Listing URL") },
+                                placeholder = { Text("https://maps.app.goo.gl/...") },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = accentColor)
+                            )
+
+                            if (tempMapsUrl.isNotEmpty()) {
+                                Button(
+                                    onClick = {
+                                        // Extract PlaceID Mock logic
+                                        val parsedId = if (tempMapsUrl.contains("place/")) {
+                                            tempMapsUrl.split("place/").getOrNull(1)?.split("/")?.firstOrNull() ?: "ChIJyTMQ5lhGkFQR8h5s5wZyC-c"
+                                        } else {
+                                            "ChIJyTMQ5lhGkFQR8h5s5wZyC-c" // Real fallback Place ID (Space Needle)
+                                        }
+                                        generatedReviewUrl = "https://search.google.com/local/writereview?placeid=$parsedId"
+                                        isLinkExtracted = true
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
+                                    shape = RoundedCornerShape(8.dp),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text("Extract Review URL", color = Color.White)
+                                }
+                            }
                         }
                     }
 
@@ -312,9 +436,10 @@ fun BusinessDashboardScreen(
                             colors = CardDefaults.cardColors(containerColor = Color(0xFFD4EDDA))
                         ) {
                             Column(modifier = Modifier.padding(10.dp)) {
-                                Text("Link Extracted & Validated!", color = Color(0xFF155724), fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(generatedReviewUrl, color = Color(0xFF155724), fontSize = 11.sp)
+                                Text("Selected Business Target Info:", color = Color(0xFF155724), fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text("Name: $tempName", color = Color(0xFF155724), fontSize = 11.sp)
+                                Text("Review Link: $generatedReviewUrl", color = Color(0xFF155724), fontSize = 10.sp)
                             }
                         }
                     }
@@ -328,6 +453,8 @@ fun BusinessDashboardScreen(
                             showAddBusinessDialog = false
                             isLinkExtracted = false
                             generatedReviewUrl = ""
+                            dialogSearchResults = emptyList()
+                            dialogSearchQuery = ""
                         }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = accentColor),
@@ -342,6 +469,8 @@ fun BusinessDashboardScreen(
                         showAddBusinessDialog = false
                         isLinkExtracted = false
                         generatedReviewUrl = ""
+                        dialogSearchResults = emptyList()
+                        dialogSearchQuery = ""
                     }
                 ) {
                     Text("Cancel")
